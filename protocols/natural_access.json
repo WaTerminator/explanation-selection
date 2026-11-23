@@ -1,0 +1,108 @@
+{
+  "experiment": "Random initialization and recovery under identifiable pairwise counts (Section 6.3 and Appendix G.7)",
+  "task": "256 bird/cat inputs with a 513-parameter head on frozen ResNet-18 features. Every query gives the number of cats in a pair of inputs. Same-class pairs identify both labels; mixed pairs form a connected degree-eight graph and leave open which input is which. rho is the weight of the mixed-pair mean loss.",
+  "random_initialization": {
+    "training_sets": [
+      1,
+      2,
+      3
+    ],
+    "heads": 32,
+    "inputs": 256,
+    "data_seed": 2026110891,
+    "head_seed": 2026110892,
+    "pair_seed": 2026110893,
+    "batch_seed": 2026110894,
+    "test_pair_seed": 2026110895,
+    "mixed_degree": 8,
+    "updates": 500000,
+    "save_every": 5000,
+    "queries_per_sgd_update": 32,
+    "conditions": [
+      {
+        "name": "rho_0.84",
+        "identified_inputs": 256,
+        "rho": 0.84
+      },
+      {
+        "name": "rho_0.86",
+        "identified_inputs": 256,
+        "rho": 0.86
+      },
+      {
+        "name": "rho_0.88",
+        "identified_inputs": 256,
+        "rho": 0.88
+      },
+      {
+        "name": "rho_0.90",
+        "identified_inputs": 256,
+        "rho": 0.9
+      },
+      {
+        "name": "rho_0.92",
+        "identified_inputs": 256,
+        "rho": 0.92
+      },
+      {
+        "name": "rho_0.94",
+        "identified_inputs": 256,
+        "rho": 0.94
+      },
+      {
+        "name": "rho_0.96",
+        "identified_inputs": 256,
+        "rho": 0.96
+      },
+      {
+        "name": "rho_0.98",
+        "identified_inputs": 256,
+        "rho": 0.98
+      },
+      {
+        "name": "rho_0.99",
+        "identified_inputs": 256,
+        "rho": 0.99
+      },
+      {
+        "name": "identified_256",
+        "identified_inputs": 256,
+        "rho": null
+      },
+      {
+        "name": "identified_32",
+        "identified_inputs": 32,
+        "rho": null
+      },
+      {
+        "name": "identified_4",
+        "identified_inputs": 4,
+        "rho": null
+      }
+    ],
+    "conditions_note": "identified_inputs is the number of inputs with a same-class query; the mixed-pair graph is kept in every condition, so the queries always determine every label. A null rho gives every retained query the same weight.",
+    "initialization": "Head weights and bias independently uniform on [-1/sqrt(512), 1/sqrt(512)], without using concept labels; the heads of a training set are shared by all conditions and optimizers",
+    "optimizers": "Full-batch gradient descent (gd), or SGD over independently sampled queries drawn with probability proportional to their weight (sgd); no momentum or weight decay",
+    "step_size": "1 / (1.5 max_i ||x_i||^2), the same for every condition and optimizer of a training set"
+  },
+  "neighborhood_entry": {
+    "condition": "rho_0.98",
+    "source": "Every gradient-descent run of that condition that ends with every training concept wrong, continued with unchanged objective and step size",
+    "minimum_wrong_margin": 1.3862943611198906,
+    "maximum_additional_updates": 30000000,
+    "save_every": 100000,
+    "updates_per_block": 100,
+    "stop_within_fraction_of_radius": 0.8,
+    "neighborhood": "The ball around the finite wrong state of Appendix F.3 in which gradient descent provably contracts toward it, with b = log 4"
+  },
+  "recovery": {
+    "source": "The final states of the neighborhood-entry runs",
+    "original_rho": 0.98,
+    "low_rho": 0.8,
+    "updates": 600000,
+    "check_every": 1000,
+    "updates_per_block": 100,
+    "rule": "Train with low_rho. At a check, restore original_rho if all observed counts are correct and the loss at original_rho is below 2 log(2) / n; original_rho is then kept",
+    "comparison": "Unchanged gradient descent at original_rho from the same states and for the same number of updates"
+  }
+}

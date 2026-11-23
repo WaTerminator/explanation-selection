@@ -1,0 +1,77 @@
+{
+  "experiment": "Four-class concept learning under Sudoku rules (Appendix G.9)",
+  "task": "Each training example is a 4x4 Sudoku board whose 16 cells are distinct CIFAR-10 images of four classes (airplane, automobile, bird, cat). The supervision consists of the row, column and 2x2-block rules and, on a fraction of the boards, the class of the top-left cell; the revealed cells cycle over the four classes.",
+  "split_seed": 2026111101,
+  "images_per_class_and_set": 1000,
+  "pools": "Per class, one seeded permutation of the CIFAR-10 training images of that class; training set k uses images 1000k to 1000k+999 of each permutation, so the four training sets are disjoint. Test boards use CIFAR-10 test images.",
+  "training_sets": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "seeds": [
+    2026111160,
+    2026111161
+  ],
+  "boards": 250,
+  "test_boards": 200,
+  "test_split_seed": 2026111105,
+  "test_board_seed": 2026111106,
+  "board_seed": 2026112110,
+  "clue_seed": 2026112130,
+  "batch_order_seed": 2026111150,
+  "fractions_of_boards_revealing_a_cell": [
+    1.0,
+    0.2,
+    0.02
+  ],
+  "normalization": [
+    [
+      0.485,
+      0.456,
+      0.406
+    ],
+    [
+      0.229,
+      0.224,
+      0.225
+    ]
+  ],
+  "input_size": 112,
+  "model": "torchvision ResNet-18 with IMAGENET1K_V1 weights and a new four-class output layer; images are resized bilinearly from 32x32 to the input size; all parameters are trained; batch normalization uses batch statistics during updates and running statistics for evaluation; no augmentation",
+  "epochs": 100,
+  "recorded_epochs": [
+    0,
+    1,
+    2,
+    3,
+    5,
+    10,
+    15,
+    20,
+    25,
+    30,
+    35,
+    40,
+    45,
+    50,
+    55,
+    60,
+    65,
+    70,
+    75,
+    80,
+    85,
+    90,
+    95,
+    100
+  ],
+  "boards_per_minibatch": 32,
+  "step_size": 0.001,
+  "optimizer": "Adam with default moment coefficients, no weight decay, constant step size",
+  "objective": "Cross-entropy against the exact posterior over the legal completions of each board (288, or 72 given a revealed cell), with a uniform prior and unit temperature",
+  "reference": "The same network trained on the true class of every cell, with the same boards, minibatches and epochs",
+  "pairing": "Within a training set and seed, every setting shares the initial network, the boards and the minibatch order",
+  "learns_the_concepts": "Training concept accuracy at least 0.99"
+}

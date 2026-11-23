@@ -1,0 +1,78 @@
+{
+  "format_version": "cifar_llp_resnet18_features_v1",
+  "feature_sha256": "41d6314d5719c20bb0e31e1a153f8ca7a46b91556e82b11345f4341adfc418f1",
+  "dataset": "torchvision CIFAR10 official train/test; download=False",
+  "classes": {
+    "2": "bird",
+    "3": "cat"
+  },
+  "source_indices": "Zero-based within each official split, in ascending official order",
+  "features": "Unnormalized float32 512-dimensional ResNet18 output before fc; no bias appended",
+  "model": "torchvision.models.resnet18",
+  "weights": "ResNet18_Weights.IMAGENET1K_V1",
+  "weight_url": "https://download.pytorch.org/models/resnet18-f37072fd.pth",
+  "weight_sha256": "f37072fd47e89c5e827621c5baffa7500819f7896bbacec160b1a16c560e07ec",
+  "transform": {
+    "input": "PIL RGB image from torchvision CIFAR10",
+    "resize_shorter_edge": 256,
+    "center_crop": [
+      224,
+      224
+    ],
+    "interpolation": "bilinear",
+    "antialias": true,
+    "scale": "uint8 to float32 in [0,1] after spatial transforms",
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  },
+  "encoder_training": false,
+  "augmentation": false,
+  "feature_normalization": false,
+  "mixed_precision": false,
+  "label_use": "Select bird/cat task and retain original labels; no model fitting or model selection",
+  "splits": {
+    "train": {
+      "count": 10000,
+      "class_counts": {
+        "2": 5000,
+        "3": 5000
+      },
+      "official_split_size": 50000,
+      "feature_norm_min": 11.565455212564034,
+      "feature_norm_max": 38.87808015163444
+    },
+    "test": {
+      "count": 2000,
+      "class_counts": {
+        "2": 1000,
+        "3": 1000
+      },
+      "official_split_size": 10000,
+      "feature_norm_min": 16.62050775724347,
+      "feature_norm_max": 41.724311387131905
+    }
+  },
+  "environment": {
+    "python": "3.10.18",
+    "torch": "2.4.1+cu121",
+    "torchvision": "0.19.1+cu121",
+    "cuda": "12.1",
+    "device": "cuda:0",
+    "device_name": "NVIDIA RTX A6000",
+    "batch_size": 128,
+    "data_loader_workers": 4,
+    "cudnn_deterministic": true,
+    "tf32": false
+  },
+  "preparation_script": "verification/prepare_cifar_llp_features.py",
+  "runtime_seconds": 9.511834040284157,
+  "count_task_reference": "https://github.com/barucden/mlellp/tree/829b2aa045b3b5fa0a39894e21919205cb9eccec"
+}

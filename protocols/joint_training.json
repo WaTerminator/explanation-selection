@@ -1,0 +1,75 @@
+{
+  "experiment": "End-to-end SGD and Adam under bag counts (Section 6.4 and Appendix G.8)",
+  "task": "CIFAR-10 bird/cat; four-image bags whose counts of cats cycle through 1, 2, 3; only the counts supervise training",
+  "training_inputs": 1024,
+  "allocation_size": 1024,
+  "allocation_draws": 5,
+  "training_sets": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "heads": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "data_seed": 2026110801,
+  "head_seed": 2026110820,
+  "batch_seed": 2026110840,
+  "test_bag_seed": 2026110850,
+  "epochs": 100,
+  "bags_per_minibatch": 8,
+  "logit_scale": 8.0,
+  "head": "513 parameters v; the logit of an input with design row x is logit_scale * v.x; v starts at w0 / logit_scale with w0 uniform on [-1/sqrt(513), 1/sqrt(513)]",
+  "step_sizes": {
+    "sgd": {
+      "head": 0.15,
+      "encoder": 0.001
+    },
+    "adam": {
+      "head": 0.00625,
+      "encoder": 5e-05
+    }
+  },
+  "sgd": {
+    "momentum": 0.0,
+    "weight_decay": 0.0
+  },
+  "adam": {
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "epsilon_head": 8e-08,
+    "epsilon_encoder": 1e-08,
+    "weight_decay": 0.0
+  },
+  "schedule": "Both step sizes follow a cosine decay to 1% of their initial values over the epochs",
+  "encoder": "torchvision ResNet-18 with IMAGENET1K_V1 weights; all parameters trained; BatchNorm running statistics fixed; no augmentation",
+  "objective": "Mean negative log exact bag-count evidence, whose gradient equals that of the cross-entropy against the detached posterior marginals",
+  "reference": "Each initial network is also trained with Adam, at the Adam step sizes above, on the correct concept labels, with the same data, minibatches and epochs",
+  "evaluation": "2,000 unseen bird/cat images (concept accuracy) and 500 fixed four-image bags of them (count accuracy)",
+  "continuation": {
+    "models": "Every count-supervised model whose evidence (the probability that all training counts hold) exceeds one half",
+    "updates": 256,
+    "protocol": "Continue with encoder and head trainable, keeping optimizer state, restarting the initial rates and holding them fixed. Compare all training labels before and after every minibatch update."
+  },
+  "original_step_sizes": {
+    "sgd": {
+      "head": 0.05,
+      "encoder": 0.003
+    },
+    "adam": {
+      "head": 0.00125,
+      "encoder": 1e-05
+    }
+  },
+  "rate_selection": "On the separate tuning set, the original grid minimized count NLL. The expanded search used tuning concept labels to identify rate directions with more concept errors, retaining rates that reliably satisfy tuning counts. Figure 4 uses step_sizes."
+}

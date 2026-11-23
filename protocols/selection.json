@@ -1,0 +1,89 @@
+{
+  "version": "cifar_llp_selection_capture_v1",
+  "task": "Controlled fixed-feature binary CIFAR-10 bird/cat learning from small-bag counts",
+  "positive_class": 3,
+  "negative_class": 2,
+  "features": "Frozen torchvision ResNet18 IMAGENET1K_V1; official deterministic evaluation transform; pre-fc 512 features, per-image L2 normalization, append bias 1, divide all 513 coordinates by sqrt(2)",
+  "training_images": 24,
+  "bag_size": 4,
+  "bag_counts": [
+    1,
+    2,
+    3,
+    1,
+    2,
+    3
+  ],
+  "sampling": "One fixed random permutation per CIFAR training class; all nine draw allocations disjoint; hidden instance labels used only for bag construction and evaluation",
+  "data_seed": 2026090601,
+  "heads_per_draw": 4,
+  "head_seed_base": 2026090700,
+  "head_initialization": "All 513 entries independently Uniform(-1/sqrt(513),1/sqrt(513)); bias random; no head filtering or balancing; shared across metrics",
+  "metric_names": [
+    "feature",
+    "feature_reverse",
+    "random_1",
+    "random_2",
+    "isotropic",
+    "raw_scaled"
+  ],
+  "isospectral_metric_names": [
+    "feature",
+    "feature_reverse",
+    "random_1",
+    "random_2"
+  ],
+  "active_subspace": "Within-bag zero-sum contrasts, dimension 18; fixed orthonormal Helmert basis P; bag-constant complement T",
+  "active_spectrum": "18 eigenvalues geometrically spaced from 4 down to 0.25",
+  "complement_spectrum": "Six unit eigenvalues",
+  "feature_metric": "P Q diag(lambda) Q^T P^T + T T^T; Q is descending eigenbasis of P^T X X^T P",
+  "feature_reverse_metric": "Reverse assignment of the same eigenvalues to the feature active eigenbasis",
+  "random_metrics": "Two Gaussian-QR orthogonal active bases per draw; fixed before training; seed 2026090800+draw",
+  "isotropic_reference": "trace-matched scalar sample identity; not isospectral and not parameter SGD",
+  "raw_reference": "4 X X^T / lambda_max(X X^T); scaled ordinary parameter-gradient reference, not isospectral",
+  "metric_information": "Training input features, disclosed counts, fixed random seeds only; no hidden labels, test outcomes, target complete code or per-head optimization",
+  "rank_check": "All 24 singular values retained; reject execution if sigma_min/sigma_max <= 1e-8; report rank failure, no sample replacement",
+  "update": "y_next=y+eta*K*R, R=2*(exact count-posterior unary minus sigmoid(y)); refreshed every step; exact shared linear-head realization via X pseudoinverse",
+  "parameter_metric": "M=Xplus K Xplus^T+(I-Xplus X); positive definite; y=Xw and w_next=w+eta*M*X^T*R",
+  "eta": 0.032,
+  "controlled_kappa_min": 0.25,
+  "kappa_max": 4.0,
+  "ascent_quantity": 3.2,
+  "ascent_condition": "eta*kappa_max*(N+1)=3.2<4; raw reference has its own measured positive lower eigenvalue",
+  "baseline_horizon": 8000,
+  "save_every_step": true,
+  "capture": "First strict sum_b log(E_b)>-log(2); entire training code, never a bagwise certificate",
+  "well_fitted": "All bag hard counts legal; mean bag legal probability >=0.95; minimum per-image modal probability >=0.90",
+  "empirical_endpoint": "Well-fitted and same full hard code for the preceding 100 updates; require well-fitted final state and unchanged final 101-state code; unresolved runs retained",
+  "timing_diagnostics": [
+    "first global capture",
+    "first well-fitted state without waiting window",
+    "first minimum-image-confidence 0.90",
+    "first MAP conditional complete-code posterior 0.90 (bagwise top-k logits; also report hard-code posterior separately, zero if illegal)",
+    "first empirical confirmation",
+    "hindsight onset of final hard-code stability"
+  ],
+  "lead_primary": "(first well-fitted time - capture time)/first well-fitted time; include zero/negative values; report every component separately",
+  "continuations_at_first_capture": [
+    "other_fixed_isospectral_direction",
+    "fixed_adverse_one_slow",
+    "adaptive_adverse_one_slow"
+  ],
+  "continuation_horizon": 4000,
+  "continuation_adversary": "Fix captured sign code as anchor. Minimize weakest anchored signed-coordinate drift over K=4I-3.75*u*u^T, either once at capture or every update. This adverse spectrum differs from the prefix spectrum but obeys the same 0.25..4 bounds; no hidden label use",
+  "evaluation": "Concept accuracy on the 2,000 test images and exact count accuracy on 500 four-image bags from one seeded permutation.",
+  "test_bag_seed": 2026110850,
+  "evaluation_draws": [
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "pilot_draws": [
+    0,
+    1,
+    2
+  ]
+}

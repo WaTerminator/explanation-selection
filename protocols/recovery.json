@@ -1,0 +1,38 @@
+{
+  "version": "cifar_identifiable_traps_v1",
+  "feature_sha256": "41d6314d5719c20bb0e31e1a153f8ca7a46b91556e82b11345f4341adfc418f1",
+  "data_seed": 2026092111,
+  "head_seed": 2026092120,
+  "pair_seed": 2026092130,
+  "test_pair_seed": 2026092140,
+  "images_per_draw": 256,
+  "mixed_degree": 8,
+  "rhos": [
+    0.5,
+    0.7,
+    0.85,
+    0.9
+  ],
+  "steps": 30000,
+  "save_every": 500,
+  "feature_transform": "raw frozen ResNet18 features plus bias; no normalization, projection, whitening or fitted adapter",
+  "initialization": "independent uniform [-1/sqrt(512), 1/sqrt(512)] weights and bias, matching torch.nn.Linear(512,1); paired across rho",
+  "optimizer": "ordinary full-batch parameter gradient descent; no weight decay or momentum",
+  "step_rule": "1/L with L=1.5*||X||op^2/n for mean negative per-query log evidence; image exposure is balanced",
+  "pairing": "one disjoint homogeneous pair per image; degree-eight mixed bipartite graph, including two connected cycle matchings; fixed query support across rho",
+  "weighting": "rho times mixed-query mean plus (1-rho) times homogeneous-query mean; equivalent to integer query repetitions for listed rational rho",
+  "reasoning": "exact posterior independently within each query; a shared deterministic predictor ties repeated image occurrences; no extra cross-query equality factors in the posterior",
+  "supervised_control": "ordinary gradient descent on individual labels from a zero head, same features and step; separate linear-realizability witness",
+  "train_diagnostic": "weighted per-query loss, concept accuracy, count accuracy by type, gradient norm and final-window prediction persistence",
+  "test_diagnostic": "all 2000 official bird/cat test images; 4000 fixed pairs balanced over ordered class combinations; count-type and rho-reweighted accuracies",
+  "pilot_draws": [
+    0
+  ],
+  "evaluation_draws": [
+    1,
+    2,
+    3
+  ],
+  "pilot_heads": 12,
+  "evaluation_heads": 12
+}

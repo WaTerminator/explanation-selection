@@ -1,0 +1,89 @@
+{
+  "experiment": "Capture timing and step size in the six-bag experiment (Appendix G.4)",
+  "runs": "The six evaluation sets, four initial heads and four isospectral Grams of protocols/selection.json: 96 runs per step size",
+  "step_bound": 0.04,
+  "fractions_of_the_step_bound": [
+    0.2,
+    0.5,
+    0.8,
+    0.95
+  ],
+  "training_time": 256.0,
+  "continuation_time": 128.0,
+  "horizons": "ceil(time / step size) updates, so every step size has the same cumulative step; the step size 0.032 gives the 8,000 and 4,000 updates of the selection experiment",
+  "capture": "First update at which the global log evidence exceeds -log 2",
+  "convergence": "First update at which all counts are correct, the mean bag evidence is at least 0.95 and every predicted label has probability at least 0.90",
+  "interventions": "At the first capture, the three Gram changes of Appendix G.3: the opposite isospectral Gram, the fixed adverse Gram and the adaptive adverse Gram",
+  "reversibility": {
+    "question": "From how late a state of a run can an admissible continuation still change a label? Every continuation keeps 0.25 I <= K_t <= 4 I and uses the current predictions and the counts, not the concept labels.",
+    "fraction_of_the_step_bound": 0.8,
+    "kappa_min": 0.25,
+    "kappa_max": 4.0,
+    "label_change_margin": 1e-08,
+    "start_states": "States of a run between its last label change and its capture, at the listed fractions of that interval; every one of the 24 labels is targeted separately",
+    "greedy": {
+      "fractions_after_last_change": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        0.9,
+        0.95,
+        0.99
+      ],
+      "include_last_state_before_capture": true,
+      "horizon": 4000,
+      "rule": "At every update, choose the Gram that minimizes the drift of the targeted signed logit"
+    },
+    "optimized": {
+      "fractions_after_last_change": [
+        0.25,
+        0.5,
+        0.75
+      ],
+      "horizons": [
+        128,
+        512
+      ],
+      "block_updates": 16,
+      "iterations": 100,
+      "control_step_size": 0.05,
+      "rule": "K_t R_t = 2.125 R_t + 1.875 ||R_t|| v_t with unit vectors v_t held fixed over blocks of updates and optimized with Adam, starting from the greedy direction"
+    },
+    "refined": {
+      "fractions_after_last_change": [
+        0.275,
+        0.3,
+        0.325,
+        0.35,
+        0.375,
+        0.4,
+        0.425,
+        0.45,
+        0.475,
+        0.5,
+        0.525,
+        0.55,
+        0.575,
+        0.6,
+        0.625,
+        0.65,
+        0.675,
+        0.7,
+        0.725
+      ],
+      "horizons": [
+        512
+      ],
+      "block_updates": 16,
+      "iterations": 40,
+      "control_step_size": 0.02,
+      "warm_start_from_optimized": {
+        "fraction": 0.25,
+        "horizon": 512
+      },
+      "warm_start": "The first start state begins from the optimized controls named above, and each later start state from the controls of the previous one"
+    },
+    "report": "For every run, the latest start state from which an independently replayed continuation changes a label; the delay is the number of updates from that state to capture"
+  }
+}

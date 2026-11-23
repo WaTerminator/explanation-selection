@@ -1,0 +1,38 @@
+{
+  "experiment": "dense_identifiable_local_minima",
+  "source": "data/minima_inputs/draw_{1,2,3}/states.npz",
+  "draws": [
+    1,
+    2,
+    3
+  ],
+  "rhos": [
+    0.85,
+    0.9
+  ],
+  "steps": 50000,
+  "save_every": 500,
+  "perturbation_logit_rms": 0.01,
+  "perturbation_seed": 2026092230,
+  "branches": [
+    "center",
+    "weak_curvature",
+    "strong_curvature",
+    "random_parameter",
+    "random_logit"
+  ],
+  "initialization": "analytic homogeneous reversal center, realized by the minimum-norm head; labels used to define diagnostic starts",
+  "directions": "weakest/strongest full effective-Hessian eigenvectors with largest-magnitude entry positive; one isotropic Gaussian full-parameter direction and one independent Gaussian logit direction realized by minimum-norm least squares",
+  "optimizer": "original ordinary full-batch parameter gradient descent, original dense scalar step, float64, no momentum or weight decay",
+  "features": "unchanged archived raw ResNet18 features plus bias; SVD only realizes initial states and measures full effective curvature",
+  "measurements": [
+    "head-gradient norm",
+    "loss excess",
+    "logit RMS distance",
+    "probability RMS distance",
+    "effective parameter distance",
+    "local quadratic energy",
+    "nullspace-component drift",
+    "hard-label accuracy"
+  ]
+}

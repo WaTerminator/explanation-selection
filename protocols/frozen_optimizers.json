@@ -1,0 +1,41 @@
+{
+  "experiment": "SGD and Adam on a shared head with frozen features (Appendix G.8)",
+  "task": "CIFAR-10 bird/cat; four-image bags whose counts of cats cycle through 1, 2, 3; only the counts supervise training",
+  "allocation_size": 1024,
+  "allocation_draws": 5,
+  "training_sets": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "heads": 8,
+  "data_seed": 2026110801,
+  "head_seed": 2026110820,
+  "batch_seed": 2026110840,
+  "test_bag_seed": 2026110850,
+  "bags_per_minibatch": 8,
+  "sizes": {
+    "96": {
+      "epochs": 50000,
+      "save_every": 1000,
+      "step_sizes": {
+        "sgd": 0.8,
+        "adam": 0.05
+      }
+    },
+    "1024": {
+      "epochs": 5000,
+      "save_every": 100,
+      "step_sizes": {
+        "sgd": 51.2,
+        "adam": 0.05
+      }
+    }
+  },
+  "features": "Frozen ResNet-18 features, per-image L2 normalization, appended bias, all 513 coordinates divided by sqrt(2); the 96 inputs are the first 96 of each 1,024-input training set",
+  "optimizers": "SGD without momentum or weight decay; Adam with betas (0.9, 0.999), epsilon 1e-8, no weight decay; the same minibatch order for both",
+  "schedule": "Cosine decay of the step size to 1% of its initial value over the epochs",
+  "objective": "Mean negative log exact bag-count evidence",
+  "fitted": "All training counts correct, mean bag evidence at least 0.95, and every predicted label has probability at least 0.90"
+}
